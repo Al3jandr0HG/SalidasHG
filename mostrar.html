@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mostrar Citas</title>
+
+    <!-- Importar Firebase SDKs -->
+    <script type="module">
+        // Importar las funciones necesarias desde Firebase SDK v9+
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js";
+        import { getFirestore, collection, query, orderBy, getDocs } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js";
+
+        // Tu configuración de Firebase
+        const firebaseConfig = {
+            apiKey: "AIzaSyDkyfuDQs6yoxmDJdwapJYqmTzJERGRVuU",
+            authDomain: "salidas-9b162.firebaseapp.com",
+            projectId: "salidas-9b162",
+            storageBucket: "salidas-9b162.firebasestorage.app",
+            messagingSenderId: "733439115098",
+            appId: "1:733439115098:web:c1867323748b5ad6033d63",
+            measurementId: "G-SFF4F6E3JE"
+        };
+
+        // Inicializar Firebase
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        // Función para obtener y mostrar las citas
+        async function mostrarCitas() {
+            const citasContainer = document.getElementById("citasContainer");
+            const q = query(collection(db, "citas"), orderBy("horario"));
+            const querySnapshot = await getDocs(q);
+
+            querySnapshot.forEach((doc) => {
+                const cita = doc.data();
+                const citaElement = document.createElement("div");
+                citaElement.classList.add("cita");
+                citaElement.innerHTML = `
+                    <p><strong>Horario de carga:</strong> ${new Date(cita.horario).toLocaleString()}</p>
+                    <p><strong>Cliente:</strong> ${cita.cliente}</p>
+                    <p><strong>Número de albarán:</strong> ${cita.albaran}</p>
+                    <p><strong>Transporte:</strong> ${cita.transporte}</p>
+                `;
+                citasContainer.appendChild(citaElement);
+            });
+        }
+
+        // Llamar a la función para mostrar las citas al cargar la página
+        mostrarCitas();
+    </script>
+
+    <style>
+        body {
+            background-color: black;
+            color: yellow;
+            font-family: Arial, sans-serif;
+        }
+
+        h1 {
+            text-align: center;
+        }
+
+        .cita {
+            background-color: #333;
+            color: yellow;
+            padding: 15px;
+            margin: 10px;
+            border-radius: 5px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .cita p {
+            margin: 0;
+            padding: 5px;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Citas Guardadas</h1>
+    <div id="citasContainer"></div>
+
+</body>
+</html>

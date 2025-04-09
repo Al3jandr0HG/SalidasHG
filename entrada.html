@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Formulario de Citas</title>
+
+    <!-- Importar Firebase SDKs -->
+    <script type="module">
+        // Importar las funciones necesarias desde Firebase SDK v9+
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js";
+        import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js";
+
+        // Tu configuración de Firebase
+        const firebaseConfig = {
+            apiKey: "AIzaSyDkyfuDQs6yoxmDJdwapJYqmTzJERGRVuU",
+            authDomain: "salidas-9b162.firebaseapp.com",
+            projectId: "salidas-9b162",
+            storageBucket: "salidas-9b162.firebasestorage.app",
+            messagingSenderId: "733439115098",
+            appId: "1:733439115098:web:c1867323748b5ad6033d63",
+            measurementId: "G-SFF4F6E3JE"
+        };
+
+        // Inicializar Firebase
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        // Función para manejar el envío del formulario
+        document.getElementById('citaForm').addEventListener('submit', async (event) => {
+            event.preventDefault();
+
+            const cliente = document.getElementById('cliente').value;
+            const albaran = document.getElementById('albaran').value;
+            const transporte = document.getElementById('transporte').value;
+            const horario = document.getElementById('horario').value;
+
+            // Guardar la cita en Firestore
+            try {
+                await addDoc(collection(db, "citas"), {
+                    cliente,
+                    albaran,
+                    transporte,
+                    horario,
+                    completada: false
+                });
+                alert("Cita guardada correctamente");
+                document.getElementById('citaForm').reset();
+            } catch (e) {
+                console.error("Error al guardar la cita: ", e);
+                alert("Error al guardar la cita");
+            }
+        });
+    </script>
+
+    <style>
+        body {
+            background-color: black;
+            color: yellow;
+            font-family: Arial, sans-serif;
+        }
+
+        h1 {
+            text-align: center;
+        }
+
+        form {
+            max-width: 500px;
+            margin: auto;
+            background-color: #333;
+            padding: 20px;
+            border-radius: 5px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 10px;
+        }
+
+        input, button {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border-radius: 5px;
+            border: none;
+        }
+
+        button {
+            background-color: #ffcc00;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #ff9900;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Formulario de Cita</h1>
+    <form id="citaForm">
+        <label for="cliente">Cliente:</label>
+        <input type="text" id="cliente" required>
+
+        <label for="albaran">Número de Albarán:</label>
+        <input type="text" id="albaran" required>
+
+        <label for="transporte">Transporte:</label>
+        <input type="text" id="transporte" required>
+
+        <label for="horario">Horario de Carga:</label>
+        <input type="datetime-local" id="horario" required>
+
+        <button type="submit">Guardar Cita</button>
+    </form>
+
+</body>
+</html>
