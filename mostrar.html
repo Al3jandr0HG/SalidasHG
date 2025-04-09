@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mostrar Citas</title>
+    <!-- Import Firebase -->
+    <script src="https://www.gstatic.com/firebasejs/9.0.2/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.0.2/firebase-firestore.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+        }
+        .cita {
+            background-color: #fff;
+            padding: 15px;
+            margin: 10px;
+            width: 100%;
+            max-width: 600px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            border-radius: 5px;
+        }
+        .cita p {
+            margin: 5px 0;
+        }
+        .cita button {
+            background-color: #e74c3c;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+        .cita button:hover {
+            background-color: #c0392b;
+        }
+    </style>
+</head>
+<body>
+    <h2>Citas Guardadas</h2>
+    <div id="citasList"></div>
+
+    <script>
+        // Configuración de Firebase
+        const firebaseConfig = {
+            apiKey: "AIzaSyBYqzIDYNVLS9dDQqjgunAM_-t8Ey5Um7Q",
+            authDomain: "salidashg.firebaseapp.com",
+            projectId: "salidashg",
+            storageBucket: "salidashg.firebasestorage.app",
+            messagingSenderId: "726817312927",
+            appId: "1:726817312927:web:995fcd0414034d44b0d2aa",
+            measurementId: "G-F7ELZELP0L"
+        };
+
+        // Inicializar Firebase
+        const app = initializeApp(firebaseConfig);
+        const db = firebase.firestore(app);
+
+        // Referencia a la colección de Firestore
+        const citasCollection = db.collection('citas');
+
+        // Escuchar cambios en la base de datos
+        citasCollection.orderBy('horarioCarga').onSnapshot((querySnapshot) => {
+            let citasHTML = '';
+            querySnapshot.forEach((doc) => {
+                const cita = doc.data();
+                citasHTML += `
+                    <div class="cita">
+                        <p><strong>Horario de carga:</strong> ${cita.horarioCarga}</p>
+                        <p><strong>Cliente:</strong> ${cita.cliente}</p>
+                        <p><strong>Número de albarán:</strong> ${cita.numeroAlbaran}</p>
+                        <p><strong>Transporte:</strong> ${cita.transporte}</p>
+                        <button onclick="eliminarCita('${doc.id}')">Eliminar</button>
+                    </div>
+                `;
+            });
+            document.getElementById('citasList').innerHTML = citasHTML;
+        });
+
+        // Función para eliminar una cita
+        function eliminarCita(id) {
+            citasCollection.doc(id).delete()
+                .then(() => {
+                    alert('Cita eliminada');
+                })
+                .catch((error) => {
+                    console.error('Error al eliminar la cita: ', error);
+                });
+        }
+    </script>
+</body>
+</html>
