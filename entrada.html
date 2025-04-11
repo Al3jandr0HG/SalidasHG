@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registrar Cita</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #3a6186, #89253e);
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            height: 100vh;
+        }
+        .form-container {
+            width: 80%;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.8);
+            border-radius: 10px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+            margin-top: 20px;
+            color: #333;
+        }
+        .form-container h1 {
+            text-align: center;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        .form-group label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+        }
+        .submit-btn {
+            background-color: #4CAF50;
+            color: white;
+            padding: 12px 25px;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            text-align: center;
+            display: block;
+            margin: 20px auto;
+            width: 100%;
+        }
+        .submit-btn:hover {
+            background-color: #45a049;
+        }
+
+        /* Estilos para la cabecera con la imagen */
+        .header {
+            width: 100%;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .header img {
+            width: 200px; /* Tamaño de la imagen */
+            height: auto;
+            border-radius: 8px;
+        }
+
+        .back-btn {
+            margin-top: 30px;
+        }
+
+        .back-btn a {
+            color: #6c63ff;
+            text-decoration: none;
+            font-size: 16px;
+        }
+
+        .back-btn a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Cabecera con la imagen -->
+    <div class="header">
+        <img src="https://www.ingredientsnetwork.com/HEIS-comp309301.png" alt="Imagen Cabecera">
+    </div>
+
+    <div class="form-container">
+        <h1>Registrar Nueva Cita</h1>
+        <form id="citaForm">
+            <div class="form-group">
+                <label for="cliente">Cliente</label>
+                <input type="text" id="cliente" name="cliente" required>
+            </div>
+            <div class="form-group">
+                <label for="albaran">Albarán</label>
+                <input type="text" id="albaran" name="albaran" required>
+            </div>
+            <div class="form-group">
+                <label for="transporte">Transporte</label>
+                <input type="text" id="transporte" name="transporte" required>
+            </div>
+            <div class="form-group">
+                <label for="horario">Horario</label>
+                <input type="datetime-local" id="horario" name="horario" required>
+            </div>
+            <button type="submit" class="submit-btn">Registrar Cita</button>
+        </form>
+    </div>
+
+    <div class="back-btn">
+        <a href="mostrar.html">Ver Citas Registradas</a>
+    </div>
+
+    <script>
+        // Al enviar el formulario
+        document.getElementById('citaForm').addEventListener('submit', function(e) {
+            e.preventDefault(); // Evitar que la página se recargue
+
+            // Obtener los valores del formulario
+            const cliente = document.getElementById('cliente').value;
+            const albaran = document.getElementById('albaran').value;
+            const transporte = document.getElementById('transporte').value;
+            const horario = document.getElementById('horario').value;
+
+            // Crear el objeto de cita con un ID único
+            const cita = {
+                cliente,
+                albaran,
+                transporte,
+                horario,
+                estado: '', // El estado inicialmente vacío
+                id: new Date().getTime() // Usar el tiempo actual como ID único
+            };
+
+            // Enviar la cita a Google Sheets (usando Sheet.best)
+            fetch('https://api.sheetbest.com/sheets/c287ad18-2d5d-4dda-8153-87dbf43af26e', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(cita)
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log('Cita registrada:', data);
+                alert('Cita registrada correctamente');
+                document.getElementById('citaForm').reset(); // Limpiar el formulario
+            })
+            .catch(error => {
+                console.error('Error al registrar la cita:', error);
+                alert('Hubo un error al registrar la cita.');
+            });
+        });
+    </script>
+
+</body>
+</html>
